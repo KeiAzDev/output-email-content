@@ -1,0 +1,1 @@
+console.log('TypeScript + Node.js 環境が整いました！');
