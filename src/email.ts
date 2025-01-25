@@ -1,5 +1,6 @@
 import imaps, { ImapSimple, ImapSimpleOptions, Message } from "imap-simple";
 import dotenv from "dotenv";
+import * as cheerio from "cheerio";
 
 dotenv.config();
 
@@ -15,6 +16,11 @@ const config: ImapSimpleOptions = {
   },
 };
 
+function extractTextFromHTML(html: string): string {
+  const $ = cheerio.load(html);
+  return $.text().trim();
+}
+
 async function fetchEmails() {
   try {
     const connection: ImapSimple = await imaps.connect(config);
@@ -27,8 +33,14 @@ async function fetchEmails() {
 
     messages.forEach((message: Message, index: number) => {
       const all = message.parts.find((part) => part.which === "TEXT");
-      const emailBody = all ? all.body : "(本文なし)";
-      console.log(`📧 ${index + 1}: ${emailBody}`);
+      
+      if (all && all.body) {
+        const emailBodyHTML = all.body;
+        const emailBodyText = extractTextFromHTML(emailBodyHTML);
+        console.log(`📧 ${index + 1}: ${emailBodyText}`);
+      } else {
+        console.log(`📧 ${index + 1}: (本文なし)`);
+      }
     });
 
     connection.end();

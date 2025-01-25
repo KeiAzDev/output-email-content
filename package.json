@@ -11,6 +11,7 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
+    "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
     "googleapis": "^144.0.0",
     "imap-simple": "^5.1.0"
